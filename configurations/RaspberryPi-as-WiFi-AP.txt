@@ -1,0 +1,120 @@
+Install the AP in RaspberryPi3
+     sudo apt-get install xrdp
+     sudo apt-get install hostapd
+     sudo apt-get install isc-dhcp-server
+
+1.Network Confiruration    /etc/network/interfaces
+    
+# interfaces(5) file used by ifup(8) and ifdown(8)
+
+# Please note that this file is written to be used with dhcpcd
+# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
+
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto lo
+iface lo inet loopback
+
+iface eth0 inet manual
+
+allow-hotplug wlan0
+iface wlan0 inet static
+    address 10.32.0.1
+    netmask 255.255.255.0
+
+allow-hotplug wlan1
+iface wlan1 inet manual
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+Restart WLAN0 one time 
+           sudo ifdown wlan0
+           sudo ifup wlan0
+           OR
+           sudo /etc/init.d/networking restart
+
+2.Config the hostap 
+           /etc/default/hostapd
+      
+# Defaults for hostapd initscript
+#
+# See /usr/share/doc/hostapd/README.Debian for information about alternative
+# methods of managing hostapd.
+#
+# Uncomment and set DAEMON_CONF to the absolute path of a hostapd configuration
+# file and hostapd will be started during system boot. An example configuration
+# file can be found at /usr/share/doc/hostapd/examples/hostapd.conf.gz
+#
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+# Additional daemon options to be appended to hostapd command:-
+#      -d   show more debug messages (-dd for even more)
+#      -K   include key data in debug messages
+#      -t   include timestamps in some debug messages
+#
+# Note that -B (daemon mode) and -P (pidfile) options are automatically
+# configured by the init.d script and must not be added to DAEMON_OPTS.
+#
+#DAEMON_OPTS=""
+
+/etc/hostapd/hostapd.conf    (Should be created )
+
+# Basic configuration
+
+interface=wlan0
+driver=nl80211
+hw_mode=g
+
+ssid=FluidbedDrying
+channel=6
+wpa=3
+wpa_passphrase=12344321
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+beacon_int=100
+auth_algs=3
+wmm_enabled=1
+      
+restart hostap, sometimes twice, until the status becomes active( running ) 
+          sudo service hostapd restart
+          sudo service hostapd status
+    if somthing wrong 
+          sudo hostapd -d /etc/hostapd/hostapd.conf #Looking for what's wrong 
+
+
+3. Config the DHCP 
+         /etc/dhcp/dhcpd.conf
+subnet 10.32.0.0 netmask 255.255.255.0 {
+    range 10.32.0.2 10.32.0.100;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.32.0.255;
+    option routers 10.32.0.1;
+}
+
+Restart isc-dhcp-server 
+          sudo service isc-dhcp-server restart
+          sudo service isc-dhcp-server status
+    if something wrong 
+          sudo journalctl -xn    # Look for the LOG 
+          sudo systemctl status isc-dhcp-server.service  # See the current output 
+
+4. Config the internet relay( Optional ) 
+          /etc/sysctl.conf
+                    net.ipv4.ip_forward=1                   #Enable it
+          
+          Config NAT 
+                   sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+          Save iptable to 
+		  /etc/iptables.up.rules
+               sudo bash
+iptables-save > /etc/iptables.up.rules
+     exit
+          Config auto load 
+                      /etc/network/if-pre-up.d/iptables
+           Write over
+#!/bin/bash
+/sbin/iptables-restore < /etc/iptables.up.rules
+
+           Set the permission 
+           sudo chmod +755 /etc/network/if-pre-up.d/iptables

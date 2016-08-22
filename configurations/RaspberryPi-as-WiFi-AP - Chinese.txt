@@ -1,0 +1,119 @@
+安装RaspberryPi3 热点
+     sudo apt-get install xrdp
+     sudo apt-get install hostapd
+     sudo apt-get install isc-dhcp-server
+
+1.配置网络    /etc/network/interfaces
+    
+# interfaces(5) file used by ifup(8) and ifdown(8)
+
+# Please note that this file is written to be used with dhcpcd
+# For static IP, consult /etc/dhcpcd.conf and 'man dhcpcd.conf'
+
+# Include files from /etc/network/interfaces.d:
+source-directory /etc/network/interfaces.d
+
+auto lo
+iface lo inet loopback
+
+iface eth0 inet manual
+
+allow-hotplug wlan0
+iface wlan0 inet static
+    address 10.32.0.1
+    netmask 255.255.255.0
+
+allow-hotplug wlan1
+iface wlan1 inet manual
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+
+重启wlan0一次
+           sudo ifdown wlan0
+           sudo ifup wlan0
+           也可以
+           sudo /etc/init.d/networking restart
+
+2.配置hostapd
+           /etc/default/hostapd
+      
+# Defaults for hostapd initscript
+#
+# See /usr/share/doc/hostapd/README.Debian for information about alternative
+# methods of managing hostapd.
+#
+# Uncomment and set DAEMON_CONF to the absolute path of a hostapd configuration
+# file and hostapd will be started during system boot. An example configuration
+# file can be found at /usr/share/doc/hostapd/examples/hostapd.conf.gz
+#
+DAEMON_CONF="/etc/hostapd/hostapd.conf"
+
+# Additional daemon options to be appended to hostapd command:-
+#      -d   show more debug messages (-dd for even more)
+#      -K   include key data in debug messages
+#      -t   include timestamps in some debug messages
+#
+# Note that -B (daemon mode) and -P (pidfile) options are automatically
+# configured by the init.d script and must not be added to DAEMON_OPTS.
+#
+#DAEMON_OPTS=""
+
+/etc/hostapd/hostapd.conf    (要新建)
+
+# Basic configuration
+
+interface=wlan0
+driver=nl80211
+hw_mode=g
+
+ssid=FluidbedDrying
+channel=6
+wpa=3
+wpa_passphrase=12344321
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+beacon_int=100
+auth_algs=3
+wmm_enabled=1
+      
+重启hostapd，有时候需要重启两次，查看状态要等于active(running)就可以
+          sudo service hostapd restart
+          sudo service hostapd status
+    如果出错
+          sudo hostapd -d /etc/hostapd/hostapd.conf 看看为什么出错
+
+
+3. 配置DHCP
+         /etc/dhcp/dhcpd.conf
+subnet 10.32.0.0 netmask 255.255.255.0 {
+    range 10.32.0.2 10.32.0.100;
+    option subnet-mask 255.255.255.0;
+    option broadcast-address 10.32.0.255;
+    option routers 10.32.0.1;
+}
+
+重启isc-dhcp-server
+          sudo service isc-dhcp-server restart
+          sudo service isc-dhcp-server status
+如果出错
+          sudo journalctl -xn可以查看日志
+          sudo systemctl status isc-dhcp-server.service也可以看到当前的输出
+
+4.设置转发，访问外网（可选步骤）
+          /etc/sysctl.conf
+                    net.ipv4.ip_forward=1                   #Enable it
+          
+          设置NAT转发
+                   sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+          保存iptable到/etc/iptables.up.rules
+               sudo bash
+iptables-save > /etc/iptables.up.rules
+     exit
+          设置自动生效
+                     新建 /etc/network/if-pre-up.d/iptables
+           写入
+#!/bin/bash
+/sbin/iptables-restore < /etc/iptables.up.rules
+
+            设置可执行权限
+           sudo chmod +755 /etc/network/if-pre-up.d/iptables

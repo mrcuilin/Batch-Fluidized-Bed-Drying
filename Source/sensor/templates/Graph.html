@@ -1,0 +1,24 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="user-scaleable=yes, width=device-width" />
+</head>
+<script language="javascript" src="/static/sensor/dygraph-combined-dev.js" ></script>
+<script language="javascript">
+ var GraphData = [];
+</script>
+<body>
+<div id='g' style='width:100%; height:100%; background-color:#F0F0F0;'></div>
+</body>
+<script language="javascript">
+ //for( var i = 0; i < GraphData.length; i++ ) { GraphData[i][0] = GraphData[i][0] / 60000.0 }
+ var g = new Dygraph( document.getElementById("g"),
+	  "SHOWRAW?SES={{ SES }}",
+      { 
+	      labels: ["Time(ms)","T1","H1","T2","H2","T3","H3" ],
+	      valueRange:[0,90],
+		  visibility:[true,true,true,true,true,false]
+      }
+	 );
+</script>
+</html>

@@ -1,0 +1,60 @@
+Install MySQL
+     sudo apt-get install mysql-server
+     sudo apt-get install python-mysqldb
+
+Install Django
+     sudo pip install Django==1.9.6
+
+Create a new Site
+     django-admin startproject mysite
+
+Create a new APP
+     cd mysite
+     python ./manage.py startapp sensor
+
+start app manually
+     python ./manage.py runserver 0.0.0.0:8000
+
+Create the database using the MySQL script in /database
+
+Install I2C Support
+     Enable I2C in RaspberryPi Configration
+     sudo apt-get install python-smbus
+     #sudo apt-get install i2c-tools            //Already included in python-smbus, in gereral
+
+I2C Scan
+     sudo i2cdetect -y 1
+
+Confir Django
+     /home/pi/mysite/mysite/settings.py
+           INSTALLED_APPS = [
+               'sensor.apps.SensorConfig',
+     /home/pi/mysite/mysite/urls.py
+           from django.conf.urls import include
+           urlpatterns = [
+                url( r'^sensor/', include('sensor.urls')),
+
+
+Django Auto startup
+     /etc/rc.local
+               #start up Django
+               cd /home/pi/mysiste
+               python manage.py runserver 0.0.0.0:8000
+
+
+Django's static file configuration
+    Refer to : https://docs.djangoproject.com/en/1.9/howto/static-files/
+    Under 'app' create folder 'static/sensor', it's 'mysite/sensor/static/sensor', place the files
+    Acces them using '/static/sensor/...
+
+Database backup
+    mysqldump -uroot dataCapture > DataBackup2016-20160614.sql
+Database restore
+    mysql -u root
+    >use dataCapture;
+    >source pi/DataBackup2016-20160614.sql
+
+Other
+     See the service status            sudo service [NAME] status
+                                    sudo service --status-all
+     

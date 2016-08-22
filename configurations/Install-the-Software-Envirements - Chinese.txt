@@ -1,0 +1,63 @@
+安装MySQL
+     sudo apt-get install mysql-server
+     sudo apt-get install python-mysqldb
+
+安装 Django
+     sudo pip install Django==1.9.6
+
+创建Site
+     django-admin startproject mysite
+
+创建一个APP
+     cd mysite
+     python ./manage.py startapp sensor
+
+手动启动app
+     python ./manage.py runserver 0.0.0.0:8000
+
+MySQL 基本的数据库建库：
+     使用database下的脚本
+
+
+安装I2C支持
+     RaspberryPi Config里打开I2C
+     sudo apt-get install python-smbus
+     #sudo apt-get install i2c-tools            //已经在python-smbus里包含了
+
+I2C扫描
+     sudo i2cdetect -y 1
+
+修改Django配置
+     /home/pi/mysite/mysite/settings.py
+           INSTALLED_APPS = [
+               'sensor.apps.SensorConfig',
+     /home/pi/mysite/mysite/urls.py
+           from django.conf.urls import include
+           urlpatterns = [
+                url( r'^sensor/', include('sensor.urls')),
+
+
+Django自动启动
+     /etc/rc.local
+               #start up Django
+               cd /home/pi/mysiste
+               python manage.py runserver 0.0.0.0:8000
+
+
+Django 的静态文件
+    参见https://docs.djangoproject.com/en/1.9/howto/static-files/
+    在app下建立文件夹static/sensor 即 mysite/sensor/static/sensor, 文件都放在里面
+    用/static/sensor/...访问
+    有点麻烦和奇怪
+
+数据备份
+    mysqldump -uroot dataCapture > DataBackup2016-20160614.sql
+数据恢复
+    mysql -u root
+    >use dataCapture;
+    >source pi/DataBackup2016-20160614.sql
+
+其他
+     查看服务状态            sudo service [NAME] status
+                                    sudo service --status-all
+     

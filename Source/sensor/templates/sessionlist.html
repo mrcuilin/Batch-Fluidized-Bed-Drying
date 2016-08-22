@@ -1,0 +1,22 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="user-scaleable=yes, width=device-width" />
+<title>Session List</title>
+</head>
+
+<body style="margin:0px;padding 4px;">
+<div style="padding:3px;background-color:#EEE;" align='right'><a href="DAYS">Go Back</a></div>
+<div style="padding:10px;background-color:#AAA; border-bottom:1px solid #4D4D4D;">Exist Samples in Day {{ day }}:</div>
+<ul>
+{% for oneses in samplesessions %}
+	{% for onesesStr in oneses %}
+	<li><a target='_blank' href='DOWNLOAD?SES={{ onesesStr}}'>{{ onesesStr }}</a>&nbsp;&nbsp;
+	<a target='_blank' href='SHOW?SES={{ onesesStr}}'>SHOW</a>&nbsp;&nbsp;
+	<span style="color:#888; font-size:4px"><a  style="color:#888; font-size:4px" target='_blank' href='SHOWGRAPH?SES={{ onesesStr}}'>GRAPH</a></span></li>
+	{% endfor %}
+{% endfor %}
+</ul>
+</body>
+</html>

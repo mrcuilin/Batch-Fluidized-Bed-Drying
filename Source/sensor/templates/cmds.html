@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="refresh" content="3;url=STATUS" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="user-scaleable=yes, width=device-width, minimum-scale:0.3" />
+<style>
+	.RunCmd {
+	    border-radius: 10px;
+    	background: #008040;
+	    padding: 20px;
+	    width: 160px;
+		font-family:Arial, Helvetica, sans-serif;
+		font-size: 54px;
+		color : #FFF;
+		text-align:center;
+		vertical-align:middle;
+		float:left;
+		margin:10px;
+		cursor: pointer;
+	}
+	.StopCmd {
+	    border-radius: 10px;
+    	background: #BD0000;
+	    padding: 20px;
+	    width: 160px;
+		font-family:Arial, Helvetica, sans-serif;
+		font-size: 54px;
+		color : #FFF;
+		text-align:center;
+		vertical-align:middle;
+		float:left;
+		margin:10px;
+		cursor:pointer;
+	}	
+	.disabled {
+		background: #ABABAB;
+		cursor : default;
+	}
+	
+	#sessionList {
+		font-size: 32px;
+		background: #ABABAB;
+		border-bottom: 1px solid #616161;
+		padding: 20px;
+		cursor : pointer;
+		text-decoration:underline;
+		font-family:Arial, Helvetica, sans-serif;
+		color:#313131;
+	}
+	
+	body {
+		margin:0px;
+		padding:0px;
+	}
+</style>
+<title>Untitled Document</title>
+</head>
+
+<body>
+<a href="DAYS"><div align="center" id="sessionList">&lt;&lt;Exist Data&gt;&gt; </div></a>
+<div align="center" style="float:none;clear:both;">
+    <DIV id="RunCmd" align="center" class="RunCmd" >RUN</DIV>
+    <DIV id="StopCmd" align="center" class="StopCmd" >STOP</DIV>
+</div>
+<div align='left' style='float:none; clear:both; margin:10px; display:none;' id='nowdata'>
+Begin From : {{ nowST }} (YYYYMMDDhhmmss)<br>
+{% for d in nowdata %}
+{{ d }}<BR>
+{% endfor %}
+</div>
+<form target="_self" method="post" id="FRM"><input name="DT" id="DT" value="" type="" style='border:none; color:#CCC;' size='32' /></form>
+</body>
+<script language="javascript">
+	var STATUS = "{{ status }}";
+        var ENABLE = "{{ enable }}";
+	$("DT").value = (new Date()).toUTCString();
+
+	function $(ID) { return self.document.getElementById( ID ); }
+	function init( S, E ) {
+                if( E === 'YES' ) {
+			if( S === "RUN" ) {
+				$("RunCmd").className = "RunCmd disabled";
+				$("DT").value = (new Date()).toUTCString();
+				$("FRM").action = "STOP";
+				$("sessionList").style.display = "none";
+				$("nowdata").style.display = "block";
+				$("StopCmd").onclick = function() {
+					$("FRM").submit();
+				}
+			}
+			else {
+				$("StopCmd").className = "StopCmd disabled";
+				$("FRM").action = "RUN";
+				$("nowdata").style.display = "none";
+				$("RunCmd").onclick = function() {
+					$("FRM").submit();
+				}
+			}
+		}
+		else {
+                                $("RunCmd").className = "RunCmd disabled";
+                                $("DT").value = (new Date()).toUTCString();
+                                $("FRM").action = "NONE";
+                                $("StopCmd").onclick = function() {
+                                        
+                                }
+                                $("StopCmd").className = "StopCmd disabled";
+                                $("nowdata").style.display = "none";
+                                $("RunCmd").onclick = function() {
+                                }
+		}
+	}
+	
+	init( STATUS, ENABLE );
+</script>
+
+</html>
