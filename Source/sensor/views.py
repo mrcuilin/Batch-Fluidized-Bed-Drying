@@ -123,7 +123,7 @@ def sessionList( request ):
     theDay = request.GET['DAY']
     db = MySQLdb.connect("localhost","root",'','dataCapture')
     curs = db.cursor()
-    curs.execute("select sampleTime from dataSession where sessionId='" + theDay + "' order by sampleTime ASC" )
+    curs.execute("select A.sampleTime, count(*) as cc from dataSession as A, Sensordata as B where A.sessionId='" + theDay + "' and A.sampleTime = B.sessionId group by B.sessionId order by sampleTime ASC" )
     data = curs.fetchall()
     curs.close()
     db.close()
