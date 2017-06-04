@@ -11,11 +11,9 @@
 <div style="padding:10px;background-color:#AAA; border-bottom:1px solid #4D4D4D;">Exist Samples in Day {{ day }}:</div>
 <ul>
 {% for oneses in samplesessions %}
-	{% for onesesStr in oneses %}
-	<li><a target='_blank' href='DOWNLOAD?SES={{ onesesStr}}'>{{ onesesStr }}</a>&nbsp;&nbsp;
-	<a target='_blank' href='SHOW?SES={{ onesesStr}}'>SHOW</a>&nbsp;&nbsp;
-	<span style="color:#888; font-size:4px"><a  style="color:#888; font-size:4px" target='_blank' href='SHOWGRAPH?SES={{ onesesStr}}'>GRAPH</a></span></li>
-	{% endfor %}
+	<li><a target='_blank' href='DOWNLOAD?SES={{ oneses.0 }}'>{{ oneses.0 }}</a>({{oneses.1}})&nbsp;&nbsp;
+	<a target='_blank' href='SHOW?SES={{ oneses.0}}'>SHOW</a>&nbsp;&nbsp;
+	<span style="color:#888; font-size:4px"><a  style="color:#888; font-size:4px" target='_blank' href='SHOWGRAPH?SES={{ oneses.0 }}'>GRAPH</a></span></li>
 {% endfor %}
 </ul>
 </body>
