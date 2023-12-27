@@ -1,33 +1,40 @@
-°²×°MySQL
-     sudo apt-get install mysql-server
+å®‰è£…MySQL
+     #sudo apt-get install mysql-server
+     sudo apt-get install mariadb-server
      sudo apt-get install python-mysqldb
+åˆå§‹åŒ–MySQL
+     mysql_secure_installation 
+     #in mysql prompt
+     GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '12344321'
+     flush privileges;    
 
-°²×° Django
+å®‰è£… Django
      sudo pip install Django==1.9.6
 
-´´½¨Site
+åˆ›å»ºSite
      django-admin startproject mysite
 
-´´½¨Ò»¸öAPP
+åˆ›å»ºä¸€ä¸ªAPP
      cd mysite
      python ./manage.py startapp sensor
 
-ÊÖ¶¯Æô¶¯app
+æ‰‹åŠ¨å¯åŠ¨app
      python ./manage.py runserver 0.0.0.0:8000
 
-MySQL »ù±¾µÄÊı¾İ¿â½¨¿â£º
-     Ê¹ÓÃdatabaseÏÂµÄ½Å±¾
+MySQL åŸºæœ¬çš„æ•°æ®åº“å»ºåº“ï¼š
+     ä½¿ç”¨databaseä¸‹çš„è„šæœ¬
+     #in mysql prompt
+     source xxxxxxxxx.sql
 
-
-°²×°I2CÖ§³Ö
-     RaspberryPi ConfigÀï´ò¿ªI2C
+å®‰è£…I2Cæ”¯æŒ
+     RaspberryPi Configé‡Œæ‰“å¼€I2C
      sudo apt-get install python-smbus
-     #sudo apt-get install i2c-tools            //ÒÑ¾­ÔÚpython-smbusÀï°üº¬ÁË
+     #sudo apt-get install i2c-tools            //å·²ç»åœ¨python-smbusé‡ŒåŒ…å«äº†
 
-I2CÉ¨Ãè
+I2Cæ‰«æ
      sudo i2cdetect -y 1
 
-ĞŞ¸ÄDjangoÅäÖÃ
+ä¿®æ”¹Djangoé…ç½®
      /home/pi/mysite/mysite/settings.py
            INSTALLED_APPS = [
                'sensor.apps.SensorConfig',
@@ -37,27 +44,27 @@ I2CÉ¨Ãè
                 url( r'^sensor/', include('sensor.urls')),
 
 
-Django×Ô¶¯Æô¶¯
+Djangoè‡ªåŠ¨å¯åŠ¨
      /etc/rc.local
                #start up Django
                cd /home/pi/mysiste
                python manage.py runserver 0.0.0.0:8000
 
 
-Django µÄ¾²Ì¬ÎÄ¼ş
-    ²Î¼ûhttps://docs.djangoproject.com/en/1.9/howto/static-files/
-    ÔÚappÏÂ½¨Á¢ÎÄ¼ş¼Ğstatic/sensor ¼´ mysite/sensor/static/sensor, ÎÄ¼ş¶¼·ÅÔÚÀïÃæ
-    ÓÃ/static/sensor/...·ÃÎÊ
-    ÓĞµãÂé·³ºÍÆæ¹Ö
+Django çš„é™æ€æ–‡ä»¶
+    å‚è§https://docs.djangoproject.com/en/1.9/howto/static-files/
+    åœ¨appä¸‹å»ºç«‹æ–‡ä»¶å¤¹static/sensor å³ mysite/sensor/static/sensor, æ–‡ä»¶éƒ½æ”¾åœ¨é‡Œé¢
+    ç”¨/static/sensor/...è®¿é—®
+    æœ‰ç‚¹éº»çƒ¦å’Œå¥‡æ€ª
 
-Êı¾İ±¸·İ
+æ•°æ®å¤‡ä»½
     mysqldump -uroot dataCapture > DataBackup2016-20160614.sql
-Êı¾İ»Ö¸´
+æ•°æ®æ¢å¤
     mysql -u root
     >use dataCapture;
     >source pi/DataBackup2016-20160614.sql
 
-ÆäËû
-     ²é¿´·şÎñ×´Ì¬            sudo service [NAME] status
+å…¶ä»–
+     æŸ¥çœ‹æœåŠ¡çŠ¶æ€            sudo service [NAME] status
                                     sudo service --status-all
      
